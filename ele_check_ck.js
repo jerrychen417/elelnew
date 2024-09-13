@@ -18,6 +18,31 @@ const {
 } = require("./common.js");
 
 const _0x11f78e = require("moment");
+const axios = require('axios');
+
+async function sendWxPusherMessage(remarks, wxUid) {
+    let content = '备注为：' + remarks + ' 的饿了么已失效，请重新登录';
+    let uids = [wxUid];
+    try {
+        // 使用 await 等待请求完成
+        const response = await axios.post('https://wxpusher.zjiecode.com/api/send/message', {
+            appToken: 'AT_SibL4CVHmJ3HLhhn3Ur6F9xAo6BgNNT7',
+            content: content,
+            uids: uids,
+            url: ''
+        });
+
+        // 检查是否存在 response 和 response.data
+        if (response && response.data && response.data.code === 1000) {
+            console.log('消息发送成功:');
+        } else {
+            console.error('消息发送失败:', response.data ? response.data.msg : '未知错误');
+        }
+    } catch (error) {
+        // 打印详细的错误信息
+        console.error('请求出错:', error.response ? error.response.data : error.message);
+    }
+}
 
 function _0x543ec4(_0x3fdeea, _0x4dabab) {
     return Math.floor(Math.random() * (_0x4dabab - _0x3fdeea + 1) + _0x3fdeea);
@@ -113,6 +138,8 @@ async function _0x179175(data, context, options) {
     const pragati = await getEnvsByName("elmck");
     for (let mackala = 0; mackala < pragati.length; mackala++) {
         let athel = pragati[mackala].value;
+        let remarks = pragati[mackala].remarks;
+        let wxUid=getCookieMap(athel).get("wxUid");
         if (!athel) {
             console.log(" ❌无效用户信息, 请重新获取ck");
         } else {
@@ -135,6 +162,9 @@ async function _0x179175(data, context, options) {
                         const lakeyah = await DisableCk(houda);
                         if (lakeyah.code === 200) {
                             console.log("第", mackala + 1, "账号失效！已🈲用");
+                            if(wxUid !=null){
+                                sendWxPusherMessage(remarks,wxUid);
+                            }else{console.log("uid未获取到");}
                         } else {
                             console.log("第", mackala + 1, "账号失效！请重新登录！！！😭");
                         }
@@ -151,6 +181,9 @@ async function _0x179175(data, context, options) {
                             const jericca = await DisableCk(houda);
                             if (jericca.code === 200) {
                                 console.log("第", mackala + 1, "账号失效！已🈲用");
+                                if(wxUid !=null){
+                                    sendWxPusherMessage(remarks,wxUid);
+                                }else{console.log("uid未获取到");}
                             } else {
                                 console.log("第", mackala + 1, "账号失效！请重新登录！！！😭");
                             }
